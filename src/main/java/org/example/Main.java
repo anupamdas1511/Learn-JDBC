@@ -1,19 +1,15 @@
 package org.example;
 
+import org.example.sqlconnection.SqlConnection;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.sql.*;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            // Load Driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // Create a connection to the mysql database
-            String url = "jdbc:mysql://localhost:3306/learnJDBC";
-            String username = "root";
-            String password = "password";
-
-            Connection connection = DriverManager.getConnection(url, username, password);
+            Connection connection = new SqlConnection().getConnection();
 
             if (connection.isClosed()) {
                 System.out.println("Connection is closed");
@@ -39,18 +35,26 @@ public class Main {
                         """;
 
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
-                preparedStatement.setString(1, "Anupam Das");
-                preparedStatement.setString(2, "Silchar");
-                preparedStatement.executeUpdate();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                System.out.print("Enter how many values you want to enter: ");
+                int n = Integer.parseInt(reader.readLine());
+                while (n-->0) {
+                    System.out.print("Enter name: ");
+                    String name = reader.readLine();
+                    System.out.print("Enter city: ");
+                    String city = reader.readLine();
+
+                    preparedStatement.setString(1, name);
+                    preparedStatement.setString(2, city);
+                    preparedStatement.executeUpdate();
+                }
 
                 System.out.println("Values added successfully");
 
                 connection.close();
 
             }
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
